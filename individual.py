@@ -11,24 +11,35 @@ class Individual:
         self.x_eta = x_eta
         self.m_prob = m_prob
         self.m_eta = m_eta
-        self.mean = 0
+        self.mean_loss = 0
         self.std = 0
         self.complexity = 0  # 复杂度，用number of params来衡量
 
         #####################
         self.feature_map_size_range = [128, 512]
         self.filter_size_set = [1, 3]  # len(filter_size_set为2，表示只有两个可能：1或3)
-        self.mean_range = [-1, 1]
-        self.std_range = [0, 1]
+        self.mean_range = [-0.8, 0.8]
+        self.std_range = [0, 0.5]
+        #####################
+        # 上面的mean和std是convlayer的，下面是batchnorm的mean and std
+        self.bn_mean_range = [0.0, 2.0]
+        self.bn_std_range = [0, 0.5]
+
+    def clear_state_info(self):
+        self.complxity = 0
+        self.mean = 0
+        self.std = 0
 
     def initialize(self):
         self.indi = self.init_one_individual()
 
     def init_one_individual(self):
-        init_num_conv = np.random.randint(4, 8)
+        init_num_conv = np.random.randint(4, 9)
+        # [4,9]才表示4-8的随机层数
         _list = []
-        for _ in range(init_num_conv-1):
+        for _ in range(init_num_conv - 1):
             _list.append(self.add_a_random_conv_layer())
+            _list.append(self.add_a_random_batchnorm_layer())
         _list.append(self.add_a_last_conv_layer())
         return _list
 
@@ -52,6 +63,12 @@ class Individual:
         n = np.random.randint(kernel_size_num)
         return self.filter_size_set[n]
 
+    def init_bn_mean(self):
+        return np.random.random() * (self.bn_mean_range[1] - self.bn_mean_range[0] + self.bn_mean_range[0])
+
+    def init_bn_std(self):
+        return np.random.random() * (self.bn_std_range[1] - self.bn_std_range[0] + self.bn_std_range[0])
+
     def add_a_random_conv_layer(self):
         s1 = self.init_kernel_size()
         filter_size = s1, s1
@@ -70,38 +87,55 @@ class Individual:
         conv_layer = ConvLayer(filter_size=filter_size, feature_map_size=feature_map_size, weight_matrix=[mean, std])
         return conv_layer
 
+    def add_a_random_batchnorm_layer(self):
+        mean = self.init_bn_mean()
+        std = self.init_bn_std()
+        batchnorm_layer = BatchNormLayer(weight_matrix=[mean, std])
+        return batchnorm_layer
+
     def mutation(self):
         if flip(self.m_prob):
             # for the units
             unit_list = []
             for i in range(self.get_layer_size() - 1):
-                cur_unit = self.get_layer_at(i)
-                if flip(0.5):
-                    # mutation
-                    p_op = self.mutation_ope(rand())
-                    min_length = 4
-                    max_length = 8
-                    current_length = (len(unit_list) + self.get_layer_size() - i - 1)  #current_length是现在unit_list长度加剩下去掉最后一层的长度，所以下面是小于而不是小于等于
-                    if p_op == 0:  # add a new
-
-                        if current_length < max_length:  # when length exceeds this length, only mutation no add new unit
-                            unit_list.append(self.generate_a_new_layer())
-                            unit_list.append(cur_unit)
-                        else:
+                if i % 2 == 0:  # 只遍历conv层，这样就可以保证conv，batchnorm交替出现
+                    cur_unit = self.get_layer_at(i)
+                    next_unit = self.get_layer_at(i + 1)
+                    # cur_unit为当前层，即conv层，next_unit为下一层，即batchnorm层
+                    if flip(0.5):
+                        # mutation
+                        p_op = self.mutation_ope(rand())
+                        min_length = 4
+                        max_length = 8
+                        current_length = (len(
+                            unit_list) + self.get_layer_size() - i - 1)  # current_length是现在unit_list长度加剩下去掉最后一层的长度，所以下面是小于而不是小于等于
+                        if p_op == 0:  # add a new
+                            if current_length < max_length:  # when length exceeds this length, only mutation no add new unit
+                                unit_list.append(self.add_a_random_conv_layer())
+                                unit_list.append(self.add_a_random_batchnorm_layer())
+                                unit_list.append(cur_unit)
+                            else:
+                                updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
+                                unit_list.append(updated_unit)
+                                updated_unit = self.mutation_a_unit(next_unit, self.m_eta)
+                                unit_list.append(updated_unit)
+                        if p_op == 1:  # modify the element
                             updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
                             unit_list.append(updated_unit)
-                    if p_op == 1:  # modify the element
-                        updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
-                        unit_list.append(updated_unit)
-                    if p_op == 2:  # delete the element
-                        if current_length < min_length:
-                            # when length not exceeds this length, only mutation no add new unit
-                            updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
+                            updated_unit = self.mutation_a_unit(next_unit, self.m_eta)
                             unit_list.append(updated_unit)
-                        # else: delete -> don't append the unit into unit_list -> do nothing
+                        if p_op == 2:  # delete the element
+                            if current_length < min_length:
+                                # when length not exceeds this length, only mutation no add new unit
+                                updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
+                                unit_list.append(updated_unit)
+                                updated_unit = self.mutation_a_unit(next_unit, self.m_eta)
+                                unit_list.append(updated_unit)
+                            # else: delete -> don't append the unit into unit_list -> do nothing
 
-                else:
-                    unit_list.append(cur_unit)
+                    else:
+                        unit_list.append(cur_unit)
+                        unit_list.append(next_unit)
             # avoid all units have been removed, add a full layer
             if len(unit_list) == 0:
                 unit_list.append(self.add_a_random_conv_layer())
@@ -116,6 +150,9 @@ class Individual:
         if unit.type == 1:
             # mutate a conv layer
             return self.mutate_conv_unit(unit, eta)
+        elif unit.type == 2:
+            # mutate a batchnorm layer
+            return self.mutate_batchnorm_unit(unit, eta)
 
     def mutate_conv_unit(self, unit, eta):
         # filter size, feature map number, mean std
@@ -131,6 +168,15 @@ class Individual:
         conv_layer = ConvLayer(filter_size=[new_fs, new_fs], feature_map_size=new_fmn,
                                weight_matrix=[new_mean, new_std])
         return conv_layer
+
+    def mutate_batchnorm_unit(self, unit, eta):
+        mean = unit.weight_matrix_mean
+        std = unit.weight_matrix_std
+
+        new_mean = self.pm(self.mean_range[0], self.mean_range[1], mean, eta)
+        new_std = self.pm(self.std_range[0], self.std_range[1], std, eta)
+        batchnorm_layer = BatchNormLayer(weight_matrix=[new_mean, new_std])
+        return batchnorm_layer
 
     def mutation_ope(self, r):
         # 0 add, 1 modify  2delete
@@ -181,18 +227,15 @@ if __name__ == "__main__":
     # print(len(i.filter_size_range))
     # print(i.init_kernel_size())
 
-    # indi.initialize()
-    # print(indi.get_layer_size())
-    # for i in range(indi.get_layer_size()):
-    #     cur_unit = indi.get_layer_at(i)
-    #     print(cur_unit)
-    #     print(cur_unit.type)
-    #     print('------------------')
-    #
-    # print('------------------------')
-    #
-    # indi.mutation()
-    # for i in range(indi.get_layer_size()):
-    #     cur_unit = indi.get_layer_at(i)
-    #     print(cur_unit)
-    #     print('------------------')
+    indi.initialize()
+    print(indi.get_layer_size())
+    for i in range(indi.get_layer_size()):
+        cur_unit = indi.get_layer_at(i)
+        print(cur_unit)
+
+    print('------------------------')
+
+    indi.mutation()
+    for i in range(indi.get_layer_size()):
+        cur_unit = indi.get_layer_at(i)
+        print(cur_unit)

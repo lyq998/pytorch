@@ -71,12 +71,22 @@ class Evolve_CNN:
         p2.clear_state_info()
 
         p1_conv_layer_list = []
+        p1_batchnorm_layer_list = []
         p2_conv_layer_list = []
+        p2_batchnorm_layer_list = []
 
         for i in range(p1.get_layer_size()):
-            p1_conv_layer_list.append(p1.get_layer_at(i))
+            unit = p1.get_layer_at(i)
+            if unit.type == 1:
+                p1_conv_layer_list.append(p1.get_layer_at(i))
+            else:  # type==2
+                p1_batchnorm_layer_list.append(p1.get_layer_at(i))
         for i in range(p2.get_layer_size()):
-            p2_conv_layer_list.append(p2.get_layer_at(i))
+            unit = p2.get_layer_at(i)
+            if unit.type == 1:
+                p2_conv_layer_list.append(p2.get_layer_at(i))
+            else:
+                p2_batchnorm_layer_list.append(p2.get_layer_at(i))
 
         l = min(len(p1_conv_layer_list), len(p2_conv_layer_list))
         for i in range(l):
@@ -91,7 +101,7 @@ class Evolve_CNN:
                 unit_p2.filter_width = w1
                 unit_p2.filter_height = w1
                 # feature map size
-                this_range = p1.featur_map_size_range
+                this_range = p1.feature_map_size_range
                 s1 = unit_p1.feature_map_size
                 s2 = unit_p2.feature_map_size
                 n_s1, n_s2 = self.sbx(s1, s2, this_range[0], this_range[-1], self.x_eta)
@@ -114,8 +124,43 @@ class Evolve_CNN:
             p1_conv_layer_list[i] = unit_p1
             p2_conv_layer_list[i] = unit_p2
 
-        p1.indi = p1_conv_layer_list
-        p2.indi = p2_conv_layer_list
+        l = min(len(p1_batchnorm_layer_list), len(p2_batchnorm_layer_list))
+        for i in range(l):
+            unit_p1 = p1_batchnorm_layer_list[i]
+            unit_p2 = p2_batchnorm_layer_list[i]
+            if flip(self.x_prob):
+                this_range = p1.bn_mean_range
+                m1 = unit_p1.weight_matrix_mean
+                m2 = unit_p2.weight_matrix_mean
+                n_m1, n_m2 = self.sbx(m1, m2, this_range[0], this_range[-1], self.x_eta)
+                unit_p1.weight_matrix_mean = n_m1
+                unit_p2.weight_matrix_mean = n_m2
+                # weight_matrix_std
+                this_range = p1.bn_std_range
+                std1 = unit_p1.weight_matrix_std
+                std2 = unit_p2.weight_matrix_std
+                n_std1, n_std2 = self.sbx(std1, std2, this_range[0], this_range[-1], self.x_eta)
+                unit_p1.weight_matrix_std = n_std1
+                unit_p2.weight_matrix_std = n_std2
+            p1_batchnorm_layer_list[i] = unit_p1
+            p2_batchnorm_layer_list[i] = unit_p2
+
+        p1_units = p1.indi
+        # assign these crossovered values to the p1 and p2
+        # 前i-1层是有conv和batchnorm两层，最后一层只有conv层
+        for i in range(len(p1_conv_layer_list)):
+            p1_units[i * 2] = p1_conv_layer_list[i]
+            if i != len(p1_conv_layer_list) - 1:
+                p1_units[i * 2 + 1] = p1_batchnorm_layer_list[i]
+        p1.indi = p1_units
+
+        p2_units = p2.indi
+        # assign these crossovered values to the p1 and p2
+        for i in range(len(p2_conv_layer_list)):
+            p2_units[i * 2] = p2_conv_layer_list[i]
+            if i != len(p2_conv_layer_list) - 1:
+                p2_units[i * 2 + 1] = p2_batchnorm_layer_list[i]
+        p2.indi = p2_units
 
         return p1, p2
 
@@ -209,6 +254,40 @@ class Evolve_CNN:
 
 
 if __name__ == '__main__':
-    cnn = Evolve_CNN(0.1, 10, 0.2, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
-    cnn.initialize_popualtion()
-    print("a")
+    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
+    # cnn.initialize_popualtion()
+    # print("a")
+
+'''
+ # crossover测试
+    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
+    indi1 = Individual()
+    indi2 = Individual()
+
+    indi1.initialize()
+    indi2.initialize()
+    print(indi1.get_layer_size())
+    for i in range(indi1.get_layer_size()):
+        cur_unit = indi1.get_layer_at(i)
+        print(cur_unit)
+    print('------------------------')
+    print(indi2.get_layer_size())
+    for i in range(indi2.get_layer_size()):
+        cur_unit = indi2.get_layer_at(i)
+        print(cur_unit)
+    print('------------------------')
+
+    print('crossover---------------')
+    indi1, indi2 = cnn.crossover(indi1, indi2)
+    print(indi1.get_layer_size())
+    for i in range(indi1.get_layer_size()):
+        cur_unit = indi1.get_layer_at(i)
+        print(cur_unit)
+    print('------------------------')
+    print(indi2.get_layer_size())
+    for i in range(indi2.get_layer_size()):
+        cur_unit = indi2.get_layer_at(i)
+        print(cur_unit)
+    print('------------------------')
+
+'''

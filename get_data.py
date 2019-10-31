@@ -64,6 +64,8 @@ def get_predict_size_labels(indi, labels):
             if current_unit.filter_height == 3:
                 # print('filter_size_3')
                 count_of_size3 += 1
+        elif current_unit.type == 2:
+            pass
         else:
             raise NameError('No unit with type value {}'.format(current_unit.type))
     if count_of_size3 == 0:
