@@ -21,6 +21,9 @@ class TiffDataset(Dataset):
         # label
         self.label_files = np.array([x.path for x in os.scandir(label_root) if
                                      x.name.endswith(".tif")])
+        #先少一点数据跑起来
+        self.image_files = self.image_files[:8000]
+        self.label_files = self.label_files[:8000]
 
     def __getitem__(self, index):
         # 读取图像数据并返回，返回训练image以及对应的label

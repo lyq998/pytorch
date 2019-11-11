@@ -13,22 +13,13 @@ import matplotlib.pyplot as plt
 
 class Evaluate:
 
-    def __init__(self, pops, train_data, train_label, validate_data, validate_label, number_of_channel, epochs,
-                 batch_size, train_data_length, validate_data_length):
+    def __init__(self, pops, batch_size):
         self.pops = pops
-        self.train_data = train_data  # train or test data.
-        self.train_label = train_label
-        self.validate_data = validate_data
-        self.validate_label = validate_label
-        self.number_of_channel = number_of_channel
-        self.epochs = epochs
         self.batch_size = batch_size
-        self.train_data_length = train_data_length
-        self.validate_data_length = validate_data_length
 
     def parse_population(self, gen_no):
         save_dir = os.getcwd() + '/save_data/gen_{:03d}'.format(gen_no)
-        # tf.gfile.MakeDirs(save_dir)
+        if not os.path.exists(save_dir): os.makedirs(save_dir)
         for i in range(self.pops.get_pop_size()):
             indi = self.pops.get_individual_at(i)
             rs_mean_loss, rs_std, num_connections = self.parse_individual(indi)
@@ -40,7 +31,7 @@ class Evaluate:
 
         pop_list = self.pops
         list_save_path = os.getcwd() + '/save_data/gen_{:03d}/pop.dat'.format(gen_no)
-        with open(list_save_path, 'wb') as file_handler:
+        with open(list_save_path, 'wb') as file_handler:  # wb:二进制写，并覆盖原文件
             pickle.dump(pop_list, file_handler)
 
     def parse_individual(self, indi):
@@ -50,13 +41,13 @@ class Evaluate:
         print(cnn)
         complexity = get_total_params(cnn.cuda(), (220, 30, 30))
 
-        train_loader = get_data.get_train_loader(16)
+        train_loader = get_data.get_train_loader(self.batch_size)
 
         # Loss and optimizer 3.定义损失函数， 使用的是最小平方误差函数
         criterion = nn.MSELoss()
         criterion = criterion.to(torch_device)
 
-        # 4.定义迭代优化算法， 使用的是随机梯度下降算法
+        # 4.定义迭代优化算法， 使用的是Adam，SGD不行
         learning_rate = 0.01
         optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
         loss_dict = []
@@ -76,7 +67,7 @@ class Evaluate:
             outputs = cnn(inputs)
             # 5.3 计算损失函数
             loss = criterion(outputs, labels)
-            loss= loss.cuda()
+            loss = loss.cuda()
 
             # Backward and optimize 5.4 反向传播更新参数
             loss.backward()
@@ -84,11 +75,26 @@ class Evaluate:
 
             # 可选 5.5 打印训练信息和保存loss
             loss_dict.append(loss.item())
-            if (i + 1) % 5 == 0:
+            if (i + 1) % 20 == 0:
                 print('Epoch [{}/{}], Loss: {:.4f}'.format(i + 1, num_epochs, loss.item()))
 
-        mean_test_loss = np.mean(loss_dict)
-        std_test_loss = np.std(loss_dict)
+        # evaluate
+        cnn.eval()
+        eval_loss_dict = []
+        valid_loader = get_data.get_validate_loader(self.batch_size)
+        for i, data in enumerate(valid_loader, 0):
+            inputs, labels = data
+            labels = get_data.get_predict_size_labels(indi, labels)
+            inputs = inputs.cuda()
+            labels = labels.cuda()
+            outputs = cnn(inputs)
+            loss = criterion(outputs, labels)
+            loss = loss.cuda()
+            eval_loss_dict.append(loss.item())
+
+        mean_test_loss = np.mean(eval_loss_dict)
+        std_test_loss = np.std(eval_loss_dict)
+        print("valid mean:{},std:{}".format(mean_test_loss, std_test_loss))
         return mean_test_loss, std_test_loss, complexity
 
         # return mean_test_accu, np.std(test_accuracy_list), complexity, history_best_score
@@ -97,8 +103,8 @@ class Evaluate:
 if __name__ == '__main__':
     import evolve
 
-    cnn = evolve.Evolve_CNN(0.1, 10, 0.2, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
+    cnn = evolve.Evolve_CNN(0.1, 10, 0.2, 1, 10, 8)
     cnn.initialize_popualtion()
 
-    evaluate = Evaluate(10, 1, 1, 1, 1, 220, 1, 32, 1000, 1000)
-    evaluate.parse_individual(cnn.pops.get_individual_at(0))
+    evaluate = Evaluate(cnn.pops, cnn.batch_size)
+    evaluate.parse_population(0)

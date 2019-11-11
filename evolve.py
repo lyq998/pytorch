@@ -5,23 +5,13 @@ from evaluate import Evaluate
 
 
 class Evolve_CNN:
-    def __init__(self, m_prob, m_eta, x_prob, x_eta, population_size, train_data, train_label, validate_data,
-                 validate_label, number_of_channel, epochs, batch_size, train_data_length, validate_data_length, eta):
+    def __init__(self, m_prob, m_eta, x_prob, x_eta, population_size, batch_size):
         self.m_prob = m_prob
         self.m_eta = m_eta
         self.x_prob = x_prob
         self.x_eta = x_eta
         self.population_size = population_size
-        self.train_data = train_data
-        self.train_label = train_label
-        self.validate_data = validate_data
-        self.validate_label = validate_label
-        self.epochs = epochs
-        self.eta = eta
-        self.number_of_channel = number_of_channel
         self.batch_size = batch_size
-        self.train_data_length = train_data_length
-        self.validate_data_length = validate_data_length
 
     def initialize_popualtion(self):
         print("initializing population with number {}...".format(self.population_size))
@@ -31,9 +21,7 @@ class Evolve_CNN:
 
     def evaluate_fitness(self, gen_no):
         print("evaluate fintesss")
-        evaluate = Evaluate(self.pops, self.train_data, self.train_label, self.validate_data, self.validate_label,
-                            self.number_of_channel, self.epochs, self.batch_size, self.train_data_length,
-                            self.validate_data_length)
+        evaluate = Evaluate(self.pops, self.batch_size)
         evaluate.parse_population(gen_no)
         #         # all theinitialized population should be saved
         save_populations(gen_no=gen_no, pops=self.pops)
@@ -56,13 +44,36 @@ class Evolve_CNN:
         offspring_pops.set_populations(offspring_list)
         save_offspring(gen_no, offspring_pops)
         # evaluate these individuals
-        evaluate = Evaluate(self.pops, self.train_data, self.train_label, self.validate_data, self.validate_label,
-                            self.number_of_channel, self.epochs, self.batch_size, self.train_data_length,
-                            self.validate_data_length)
+        # 疑问：这里的self.pops不是CNN的pops吗，不应该去evaluate offspring_pops吗
+        evaluate = Evaluate(offspring_pops, self.batch_size)
         evaluate.parse_population(gen_no)
         #         #save
         self.pops.pops.extend(offspring_pops.pops)
         save_populations(gen_no=gen_no, pops=self.pops)
+
+    def environmental_selection(self, gen_no):
+        assert (self.pops.get_pop_size() == 2 * self.population_size)
+        print('environmental selection...')
+        elitsam = 0.2
+        e_count = int(np.floor(self.population_size * elitsam / 2) * 2)
+        indi_list = self.pops.pops
+        indi_list.sort(key=lambda x: x.mean_loss, reverse=False)
+        # 这里要升序排序才可以，mean_loss越小越好，即reverse=Flase
+        elistm_list = indi_list[0:e_count]
+
+        left_list = indi_list[e_count:]
+        np.random.shuffle(left_list)
+        np.random.shuffle(left_list)
+
+        for _ in range(self.population_size - e_count):
+            i1 = randint(0, len(left_list))
+            i2 = randint(0, len(left_list))
+            winner = self.selection(left_list[i1], left_list[i2])
+            elistm_list.append(winner)
+
+        self.pops.set_populations(elistm_list)
+        save_populations(gen_no=gen_no, pops=self.pops)
+        np.random.shuffle(self.pops.pops)
 
     def crossover(self, p1, p2):
         p1 = copy.deepcopy(p1)
@@ -101,12 +112,14 @@ class Evolve_CNN:
                 unit_p2.filter_width = w1
                 unit_p2.filter_height = w1
                 # feature map size
-                this_range = p1.feature_map_size_range
-                s1 = unit_p1.feature_map_size
-                s2 = unit_p2.feature_map_size
-                n_s1, n_s2 = self.sbx(s1, s2, this_range[0], this_range[-1], self.x_eta)
-                unit_p1.feature_map_size = int(n_s1)
-                unit_p2.feature_map_size = int(n_s2)
+                # 最后一层不交换feature_map_size
+                if i != l - 1:
+                    this_range = p1.feature_map_size_range
+                    s1 = unit_p1.feature_map_size
+                    s2 = unit_p2.feature_map_size
+                    n_s1, n_s2 = self.sbx(s1, s2, this_range[0], this_range[-1], self.x_eta)
+                    unit_p1.feature_map_size = int(n_s1)
+                    unit_p2.feature_map_size = int(n_s2)
                 # weight_matrix_mean
                 this_range = p1.mean_range
                 m1 = unit_p1.weight_matrix_mean
@@ -146,6 +159,7 @@ class Evolve_CNN:
             p2_batchnorm_layer_list[i] = unit_p2
 
         p1_units = p1.indi
+
         # assign these crossovered values to the p1 and p2
         # 前i-1层是有conv和batchnorm两层，最后一层只有conv层
         for i in range(len(p1_conv_layer_list)):
@@ -163,28 +177,6 @@ class Evolve_CNN:
         p2.indi = p2_units
 
         return p1, p2
-
-    def environmental_selection(self, gen_no):
-        assert (self.pops.get_pop_size() == 2 * self.population_size)
-        elitsam = 0.2
-        e_count = int(np.floor(self.population_size * elitsam / 2) * 2)
-        indi_list = self.pops.pops
-        indi_list.sort(key=lambda x: x.mean, reverse=True)
-        elistm_list = indi_list[0:e_count]
-
-        left_list = indi_list[e_count:]
-        np.random.shuffle(left_list)
-        np.random.shuffle(left_list)
-
-        for _ in range(self.population_size - e_count):
-            i1 = randint(0, len(left_list))
-            i2 = randint(0, len(left_list))
-            winner = self.selection(left_list[i1], left_list[i2])
-            elistm_list.append(winner)
-
-        self.pops.set_populations(elistm_list)
-        save_populations(gen_no=gen_no, pops=self.pops)
-        np.random.shuffle(self.pops.pops)
 
     def sbx(self, p1, p2, xl, xu, eta):
         '''
@@ -232,31 +224,54 @@ class Evolve_CNN:
 
     def selection(self, ind1, ind2):
         # Slack Binary Tournament Selection
-        mean_threshold = 0.05
-        complexity_threhold = 100000
-        # 一个四层的cnn（fliter_size均为3的话，param个数为220万）
-        if ind1.mean > ind2.mean:
-            if ind1.mean - ind2.mean > mean_threshold:
-                return ind1
-            else:
-                if ind2.complxity < (ind1.complxity - complexity_threhold):
-                    return ind2
-                else:
-                    return ind1
-        else:
-            if ind2.mean - ind1.mean > mean_threshold:
+        mean_threshold = 500
+        complexity_threhold = 0.1
+        # 一个四层的cnn（fliter_size均为3的话，param个数为220万），所以决定param用比例,mean用绝对的数值
+        if ind1.mean_loss > ind2.mean_loss:
+            # 此时ind2性能比1好
+            if ind1.mean_loss - ind2.mean_loss > mean_threshold:  # 差值越大说明1的性能越差
                 return ind2
             else:
-                if ind1.complxity < (ind2.complxity - complexity_threhold):
+                # 在没有差到超过阈值mean_threshold的情况下，如果2的复杂度相对1的百分比没有超过阈值则返回2，反之则返回1
+                # 因为老是有零除错误，所以改为乘号
+                if ind2.complexity - ind1.complexity > complexity_threhold * ind1.complexity:
                     return ind1
                 else:
                     return ind2
+        else:
+            # 此时ind1性能比2好
+            if ind2.mean_loss - ind1.mean_loss > mean_threshold:
+                return ind1
+            else:
+                if ind1.complexity - ind2.complexity > complexity_threhold * ind2.complexity:
+                    return ind2
+                else:
+                    return ind1
 
 
 if __name__ == '__main__':
-    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
-    # cnn.initialize_popualtion()
-    # print("a")
+    '''
+    # mutation 测试
+    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 8)
+    cnn.initialize_popualtion()
+    print(cnn.pops)
+    print("mutation and crossover...")
+    offspring_list = []
+    for _ in range(int(cnn.pops.get_pop_size() / 2)):
+        p1 = cnn.tournament_selection()
+        p2 = cnn.tournament_selection()
+        # crossover
+        offset1, offset2 = cnn.crossover(p1, p2)
+        # mutation
+        offset1.mutation()
+        offset2.mutation()
+        offspring_list.append(offset1)
+        offspring_list.append(offset2)
+    offspring_pops = Population(0)
+    offspring_pops.set_populations(offspring_list)
+    print(offspring_pops)
+    '''
+
 
 '''
  # crossover测试

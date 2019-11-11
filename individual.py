@@ -26,8 +26,8 @@ class Individual:
         self.bn_std_range = [0, 0.5]
 
     def clear_state_info(self):
-        self.complxity = 0
-        self.mean = 0
+        self.complexity = 0
+        self.mean_loss = 0
         self.std = 0
 
     def initialize(self):
@@ -217,6 +217,22 @@ class Individual:
         if y > yu:
             y = yu
         return y
+
+    def __str__(self):
+        str_ = []
+        str_.append('Length:{}, Num:{}'.format(self.get_layer_size(), self.complexity))
+        str_.append('Mean:{:.2f}'.format(self.mean_loss))
+        str_.append('Std:{:.2f}'.format(self.std))
+
+        for i in range(self.get_layer_size()):
+            unit = self.get_layer_at(i)
+            if unit.type == 1:
+                str_.append("conv[{},{},{},{:.2f},{:.2f}]".format(unit.filter_width, unit.filter_height, unit.feature_map_size, unit.weight_matrix_mean, unit.weight_matrix_std))
+            elif unit.type == 2:
+                str_.append("batchnorm[{},{}]".format(unit.weight_matrix_mean, unit.weight_matrix_std))
+            else:
+                raise Exception("Incorrect unit flag")
+        return ', '.join(str_)
 
 
 if __name__ == "__main__":
