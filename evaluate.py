@@ -25,7 +25,7 @@ class Evaluate:
             rs_mean_loss, rs_std, num_connections = self.parse_individual(indi)
             indi.mean_loss = rs_mean_loss
             indi.std = rs_std
-            indi.complxity = num_connections
+            indi.complexity = num_connections
             list_save_path = os.getcwd() + '/save_data/gen_{:03d}/pop.txt'.format(gen_no)
             utils.save_append_individual(str(indi), list_save_path)
 

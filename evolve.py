@@ -90,13 +90,13 @@ class Evolve_CNN:
             unit = p1.get_layer_at(i)
             if unit.type == 1:
                 p1_conv_layer_list.append(p1.get_layer_at(i))
-            else:  # type==2
+            elif unit.type == 2:  # type==2
                 p1_batchnorm_layer_list.append(p1.get_layer_at(i))
         for i in range(p2.get_layer_size()):
             unit = p2.get_layer_at(i)
             if unit.type == 1:
                 p2_conv_layer_list.append(p2.get_layer_at(i))
-            else:
+            elif unit.type == 2:
                 p2_batchnorm_layer_list.append(p2.get_layer_at(i))
 
         l = min(len(p1_conv_layer_list), len(p2_conv_layer_list))
@@ -159,12 +159,12 @@ class Evolve_CNN:
             p2_batchnorm_layer_list[i] = unit_p2
 
         p1_units = p1.indi
-
         # assign these crossovered values to the p1 and p2
         # 前i-1层是有conv和batchnorm两层，最后一层只有conv层
         for i in range(len(p1_conv_layer_list)):
             p1_units[i * 2] = p1_conv_layer_list[i]
             if i != len(p1_conv_layer_list) - 1:
+                #这里越界出问题了检查一下
                 p1_units[i * 2 + 1] = p1_batchnorm_layer_list[i]
         p1.indi = p1_units
 
@@ -273,9 +273,9 @@ if __name__ == '__main__':
     '''
 
 
-'''
+
  # crossover测试
-    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1)
+    cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 8)
     indi1 = Individual()
     indi2 = Individual()
 
@@ -305,4 +305,4 @@ if __name__ == '__main__':
         print(cur_unit)
     print('------------------------')
 
-'''
+

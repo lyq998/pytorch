@@ -37,14 +37,14 @@ if __name__ == '__main__':
     pop_size = 10
 
     # 测试
-    gen_no, pops, create_time = load_population()
-    cnn = Evolve_CNN(0.9, 1, 0.2, 1, pop_size, batch_size)
-    cnn.pops = pops
-    cur_gen_no = 1
-    cnn.recombinate(cur_gen_no)
+    # gen_no, pops, create_time = load_population()
+    # cnn = Evolve_CNN(0.9, 1, 0.2, 1, pop_size, batch_size)
+    # cnn.pops = pops
+    # cur_gen_no = 1
+    # cnn.recombinate(cur_gen_no)
 
     # print(gen_no, pops, create_time)
     # print(pops.get_pop_size())
 
     # begin_evolve(0.9, 1, 0.2, 1, pop_size, batch_size, total_generation_number)
-    # restart_evolve(0.9, 1, 0.2, 1, pop_size, batch_size, total_generation_number)
+    restart_evolve(0.9, 1, 0.2, 1, pop_size, batch_size, total_generation_number)
