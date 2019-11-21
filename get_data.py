@@ -21,9 +21,9 @@ class TiffDataset(Dataset):
         # label
         self.label_files = np.array([x.path for x in os.scandir(label_root) if
                                      x.name.endswith(".tif")])
-        #先少一点数据跑起来
-        self.image_files = self.image_files[:8000]
-        self.label_files = self.label_files[:8000]
+        # 先少一点数据跑起来
+        # self.image_files = self.image_files[:200]
+        # self.label_files = self.label_files[:200]
 
     def __getitem__(self, index):
         # 读取图像数据并返回，返回训练image以及对应的label
@@ -59,6 +59,7 @@ def get_validate_loader(batch_size):
 
 
 def get_predict_size_labels(indi, labels):
+    # 这是原本没有加Padding层的时候，每一个kerel_size=3的卷积层要减少一个Padding
     num_of_units = indi.get_layer_size()
     count_of_size3 = 0
     for i in range(num_of_units):
@@ -74,11 +75,12 @@ def get_predict_size_labels(indi, labels):
     if count_of_size3 == 0:
         return labels
     else:
-        labels = labels[:,:,count_of_size3:(-count_of_size3),count_of_size3:(-count_of_size3)]
+        labels = labels[:, :, count_of_size3:(-count_of_size3), count_of_size3:(-count_of_size3)]
         return labels
 
-def get_size_labels(num,lables):
-    return lables[:,:,num:-num,num:-num]
+
+def get_size_labels(num, lables):
+    return lables[:, :, num:-num, num:-num]
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ import torch
 
 
 class CNN(nn.ModuleList):
-    def __init__(self,indi):
+    def __init__(self, indi):
         super(CNN, self).__init__()
         num_of_units = indi.get_layer_size()
         in_channels = 220  # 初始输入图像通道为220
@@ -22,6 +22,10 @@ class CNN(nn.ModuleList):
                 nn.init.normal_(conv.weight, mean, std)
                 conv.weight.requires_grad = True
                 self.append(conv)
+
+                if (current_unit.filter_height == 3) and (i != num_of_units - 1):
+                    # 如果是filter_height=3且不是最后一层，加一个镜像的Padding
+                    self.append(nn.ReflectionPad2d(1))
 
                 in_channels = current_unit.feature_map_size
             elif current_unit.type == 2:

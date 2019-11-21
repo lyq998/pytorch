@@ -17,10 +17,10 @@ class Evaluate:
         self.pops = pops
         self.batch_size = batch_size
 
-    def parse_population(self, gen_no):
+    def parse_population(self, gen_no, evaluated_num):
         save_dir = os.getcwd() + '/save_data/gen_{:03d}'.format(gen_no)
         if not os.path.exists(save_dir): os.makedirs(save_dir)
-        for i in range(self.pops.get_pop_size()):
+        for i in range(evaluated_num, self.pops.get_pop_size()):
             indi = self.pops.get_individual_at(i)
             rs_mean_loss, rs_std, num_connections = self.parse_individual(indi)
             indi.mean_loss = rs_mean_loss
@@ -28,11 +28,9 @@ class Evaluate:
             indi.complexity = num_connections
             list_save_path = os.getcwd() + '/save_data/gen_{:03d}/pop.txt'.format(gen_no)
             utils.save_append_individual(str(indi), list_save_path)
+            utils.save_populations(gen_no, self.pops)
 
-        pop_list = self.pops
-        list_save_path = os.getcwd() + '/save_data/gen_{:03d}/pop.dat'.format(gen_no)
-        with open(list_save_path, 'wb') as file_handler:  # wb:二进制写，并覆盖原文件
-            pickle.dump(pop_list, file_handler)
+        utils.save_generated_population(gen_no, self.pops)
 
     def parse_individual(self, indi):
         torch_device = torch.device('cuda')
@@ -48,7 +46,7 @@ class Evaluate:
         criterion = criterion.to(torch_device)
 
         # 4.定义迭代优化算法， 使用的是Adam，SGD不行
-        learning_rate = 0.01
+        learning_rate = 0.004
         optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
         loss_dict = []
         num_epochs = train_loader.__len__()
@@ -57,7 +55,7 @@ class Evaluate:
         for i, data in enumerate(train_loader, 0):
             # Convert numpy arrays to torch tensors  5.1 准备tensor的训练数据和标签
             inputs, labels = data
-            labels = get_data.get_predict_size_labels(indi, labels)
+            labels = get_data.get_size_labels(1, labels)
             inputs = inputs.cuda()
             labels = labels.cuda()
             # labels = get_data.get_size_labels(indi.get_layer_size(),labels)
@@ -75,7 +73,7 @@ class Evaluate:
 
             # 可选 5.5 打印训练信息和保存loss
             loss_dict.append(loss.item())
-            if (i + 1) % 20 == 0:
+            if (i + 1) % 100 == 0:
                 print('Epoch [{}/{}], Loss: {:.4f}'.format(i + 1, num_epochs, loss.item()))
 
         # evaluate
@@ -84,7 +82,7 @@ class Evaluate:
         valid_loader = get_data.get_validate_loader(self.batch_size)
         for i, data in enumerate(valid_loader, 0):
             inputs, labels = data
-            labels = get_data.get_predict_size_labels(indi, labels)
+            labels = get_data.get_size_labels(1, labels)
             inputs = inputs.cuda()
             labels = labels.cuda()
             outputs = cnn(inputs)

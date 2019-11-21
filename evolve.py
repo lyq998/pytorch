@@ -19,15 +19,16 @@ class Evolve_CNN:
         # all the initialized population should be saved
         save_populations(gen_no=-1, pops=self.pops)
 
-    def evaluate_fitness(self, gen_no):
+    def evaluate_fitness(self, gen_no, evaluated_num):
         print("evaluate fintesss")
         evaluate = Evaluate(self.pops, self.batch_size)
-        evaluate.parse_population(gen_no)
+        evaluate.parse_population(gen_no, evaluated_num)
         #         # all theinitialized population should be saved
         save_populations(gen_no=gen_no, pops=self.pops)
+        save_each_gen_population(gen_no=gen_no, pops=self.pops)
         print(self.pops)
 
-    def recombinate(self, gen_no):
+    def recombinate(self, gen_no, evaluated_num):
         print("mutation and crossover...")
         offspring_list = []
         for _ in range(int(self.pops.get_pop_size() / 2)):
@@ -46,10 +47,11 @@ class Evolve_CNN:
         # evaluate these individuals
         # 疑问：这里的self.pops不是CNN的pops吗，不应该去evaluate offspring_pops吗
         evaluate = Evaluate(offspring_pops, self.batch_size)
-        evaluate.parse_population(gen_no)
+        evaluate.parse_population(gen_no, evaluated_num)
         #         #save
         self.pops.pops.extend(offspring_pops.pops)
         save_populations(gen_no=gen_no, pops=self.pops)
+        save_each_gen_population(gen_no=gen_no, pops=self.pops)
 
     def environmental_selection(self, gen_no):
         assert (self.pops.get_pop_size() == 2 * self.population_size)
@@ -73,6 +75,7 @@ class Evolve_CNN:
 
         self.pops.set_populations(elistm_list)
         save_populations(gen_no=gen_no, pops=self.pops)
+        save_each_gen_population(gen_no=gen_no, pops=self.pops)
         np.random.shuffle(self.pops.pops)
 
     def crossover(self, p1, p2):
@@ -104,16 +107,16 @@ class Evolve_CNN:
             unit_p1 = p1_conv_layer_list[i]
             unit_p2 = p2_conv_layer_list[i]
             if flip(self.x_prob):
-                # filter size : exchange each's filter size
-                w1 = unit_p1.filter_width
-                w2 = unit_p2.filter_width
-                unit_p1.filter_width = w2
-                unit_p1.filter_height = w2
-                unit_p2.filter_width = w1
-                unit_p2.filter_height = w1
-                # feature map size
-                # 最后一层不交换feature_map_size
                 if i != l - 1:
+                    # 最后一层不交换filter_size and feature_map_size
+                    # filter size : exchange each's filter size
+                    w1 = unit_p1.filter_width
+                    w2 = unit_p2.filter_width
+                    unit_p1.filter_width = w2
+                    unit_p1.filter_height = w2
+                    unit_p2.filter_width = w1
+                    unit_p2.filter_height = w1
+                    # feature map size
                     this_range = p1.feature_map_size_range
                     s1 = unit_p1.feature_map_size
                     s2 = unit_p2.feature_map_size
@@ -164,7 +167,7 @@ class Evolve_CNN:
         for i in range(len(p1_conv_layer_list)):
             p1_units[i * 2] = p1_conv_layer_list[i]
             if i != len(p1_conv_layer_list) - 1:
-                #这里越界出问题了检查一下
+                # 这里越界出问题了检查一下
                 p1_units[i * 2 + 1] = p1_batchnorm_layer_list[i]
         p1.indi = p1_units
 
@@ -224,7 +227,7 @@ class Evolve_CNN:
 
     def selection(self, ind1, ind2):
         # Slack Binary Tournament Selection
-        mean_threshold = 500
+        mean_threshold = 1000
         complexity_threhold = 0.1
         # 一个四层的cnn（fliter_size均为3的话，param个数为220万），所以决定param用比例,mean用绝对的数值
         if ind1.mean_loss > ind2.mean_loss:
@@ -272,9 +275,7 @@ if __name__ == '__main__':
     print(offspring_pops)
     '''
 
-
-
- # crossover测试
+    # crossover测试
     cnn = Evolve_CNN(0.1, 10, 0.9, 1, 10, 8)
     indi1 = Individual()
     indi2 = Individual()
@@ -304,5 +305,3 @@ if __name__ == '__main__':
         cur_unit = indi2.get_layer_at(i)
         print(cur_unit)
     print('------------------------')
-
-

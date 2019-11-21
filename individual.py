@@ -79,7 +79,7 @@ class Individual:
         return conv_layer
 
     def add_a_last_conv_layer(self):
-        s1 = self.init_kernel_size()
+        s1 = 3
         filter_size = s1, s1
         feature_map_size = 220
         mean = self.init_mean()
@@ -114,6 +114,7 @@ class Individual:
                                 unit_list.append(self.add_a_random_conv_layer())
                                 unit_list.append(self.add_a_random_batchnorm_layer())
                                 unit_list.append(cur_unit)
+                                unit_list.append(next_unit)
                             else:
                                 updated_unit = self.mutation_a_unit(cur_unit, self.m_eta)
                                 unit_list.append(updated_unit)
@@ -136,14 +137,11 @@ class Individual:
                     else:
                         unit_list.append(cur_unit)
                         unit_list.append(next_unit)
-            # avoid all units have been removed, add a full layer
-            if len(unit_list) == 0:
-                unit_list.append(self.add_a_random_conv_layer())
-            # 最后一层不去动他，这样就保证输出结果格式的正确性。前面的for i 是从1开始
+            # 最后一层不去动他，这样就保证输出结果格式的正确性。前面的for i 是从0开始
             unit_list.append(self.get_layer_at(-1))
             # judge the first unit and the second unit
-            if unit_list[0].type != 1:
-                unit_list.insert(0, self.add_a_random_conv_layer())
+            # if unit_list[0].type != 1:
+            #     unit_list.insert(0, self.add_a_random_conv_layer())
             self.indi = unit_list
 
     def mutation_a_unit(self, unit, eta):
@@ -227,7 +225,9 @@ class Individual:
         for i in range(self.get_layer_size()):
             unit = self.get_layer_at(i)
             if unit.type == 1:
-                str_.append("conv[{},{},{},{:.2f},{:.2f}]".format(unit.filter_width, unit.filter_height, unit.feature_map_size, unit.weight_matrix_mean, unit.weight_matrix_std))
+                str_.append(
+                    "conv[{},{},{},{:.2f},{:.2f}]".format(unit.filter_width, unit.filter_height, unit.feature_map_size,
+                                                          unit.weight_matrix_mean, unit.weight_matrix_std))
             elif unit.type == 2:
                 str_.append("batchnorm[{},{}]".format(unit.weight_matrix_mean, unit.weight_matrix_std))
             else:
