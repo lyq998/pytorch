@@ -28,10 +28,10 @@ class Evolve_CNN:
         save_each_gen_population(gen_no=gen_no, pops=self.pops)
         print(self.pops)
 
-    def recombinate(self, gen_no, evaluated_num):
+    def recombinate(self, gen_no, evaluated_num, pop_size):
         print("mutation and crossover...")
         offspring_list = []
-        for _ in range(int(self.pops.get_pop_size() / 2)):
+        for _ in range(int(pop_size / 2)):
             p1 = self.tournament_selection()
             p2 = self.tournament_selection()
             # crossover
@@ -43,13 +43,13 @@ class Evolve_CNN:
             offspring_list.append(offset2)
         offspring_pops = Population(0)
         offspring_pops.set_populations(offspring_list)
+        self.pops.pops.extend(offspring_pops.pops)
         save_offspring(gen_no, offspring_pops)
         # evaluate these individuals
-        # 疑问：这里的self.pops不是CNN的pops吗，不应该去evaluate offspring_pops吗
-        evaluate = Evaluate(offspring_pops, self.batch_size)
+        evaluate = Evaluate(self.pops, self.batch_size)
         evaluate.parse_population(gen_no, evaluated_num)
         #         #save
-        self.pops.pops.extend(offspring_pops.pops)
+        self.pops.pops[pop_size:2 * pop_size] = offspring_pops.pops
         save_populations(gen_no=gen_no, pops=self.pops)
         save_each_gen_population(gen_no=gen_no, pops=self.pops)
 

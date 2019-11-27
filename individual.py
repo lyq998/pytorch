@@ -108,7 +108,7 @@ class Individual:
                         min_length = 4
                         max_length = 8
                         current_length = (len(
-                            unit_list) + self.get_layer_size() - i - 1)  # current_length是现在unit_list长度加剩下去掉最后一层的长度，所以下面是小于而不是小于等于
+                            unit_list) + self.get_layer_size() - i - 1) / 2  # current_length是现在unit_list长度加剩下去掉最后一层的长度，记得要除以2，因为一层有C何BN层，所以下面是小于而不是小于等于
                         if p_op == 0:  # add a new
                             if current_length < max_length:  # when length exceeds this length, only mutation no add new unit
                                 unit_list.append(self.add_a_random_conv_layer())

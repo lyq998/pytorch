@@ -3,13 +3,10 @@ from utils import *
 
 
 def begin_evolve(m_prob, m_eta, x_prob, x_eta, pop_size, batch_size, total_generation_number):
+    # 只用于创建初始种群，保存为pops.dat
     cnn = Evolve_CNN(m_prob, m_eta, x_prob, x_eta, pop_size, batch_size)
     cnn.initialize_popualtion()
     cnn.evaluate_fitness(0, 0)
-    for cur_gen_no in range(total_generation_number):
-        print('The {}/{} generation'.format(cur_gen_no + 1, total_generation_number))
-        cnn.recombinate(cur_gen_no + 1, 0)
-        cnn.environmental_selection(cur_gen_no + 1)
 
 
 def restart_evolve(m_prob, m_eta, x_prob, x_eta, pop_size, batch_size, total_gene_number):
@@ -17,21 +14,19 @@ def restart_evolve(m_prob, m_eta, x_prob, x_eta, pop_size, batch_size, total_gen
     evaluated_num = pops.get_evaluated_pop_size()
     cnn = Evolve_CNN(m_prob, m_eta, x_prob, x_eta, pop_size, batch_size)
     cnn.pops = pops
-    if evaluated_num != pop_size:  # 接着上一代没跑完的继续evaluate完
+    if evaluated_num != pop_size * 2 and pops.get_pop_size() != pop_size:  # 接着上一代没跑完的继续evaluate完，且不是第一代
         print('continue to evaluate indi:{}...'.format(evaluated_num))
         cnn.evaluate_fitness(gen_no, evaluated_num)
-        evaluated_num = 0
-    else:
-        evaluated_num = 0
+    evaluated_num = pop_size
 
     # 判断有没有经历environmental_selection
-    if pops.get_pop_size() == pop_size * 2:
+    if pops.get_evaluated_pop_size() == pop_size * 2:
         cur_gen_no = gen_no
         cnn.environmental_selection(cur_gen_no)
     for cur_gen_no in range(gen_no + 1, total_gene_number + 1):
         print('Continue to evolve from the {}/{} generation...'.format(cur_gen_no, total_gene_number))
-        cnn.recombinate(cur_gen_no, evaluated_num)
-        evaluated_num = 0
+        cnn.recombinate(cur_gen_no, evaluated_num, pop_size)
+        evaluated_num = pop_size
         cnn.environmental_selection(cur_gen_no)
 
 
