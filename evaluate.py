@@ -39,7 +39,7 @@ class Evaluate:
         print(cnn)
         complexity = get_total_params(cnn.cuda(), (220, 30, 30))
 
-        train_loader = get_data.get_train_loader(self.batch_size)
+        train_loader = get_data.get_mixed_train_loader(self.batch_size)
 
         # Loss and optimizer 3.定义损失函数， 使用的是最小平方误差函数
         criterion = nn.MSELoss()
@@ -79,7 +79,7 @@ class Evaluate:
         # evaluate
         cnn.eval()
         eval_loss_dict = []
-        valid_loader = get_data.get_validate_loader(self.batch_size)
+        valid_loader = get_data.get_mixed_validate_loader(self.batch_size)
         for i, data in enumerate(valid_loader, 0):
             inputs, labels = data
             labels = get_data.get_size_labels(1, labels)

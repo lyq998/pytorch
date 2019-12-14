@@ -8,9 +8,17 @@ import torch
 train_image_path = 'G:/evocnn/image_set/image_set/train_image/images/'
 train_label_path = 'G:/evocnn/image_set/image_set/train_image/labels/'
 test_image_path = 'G:/evocnn/image_set/image_set/test_image/images/'
+test_gauss50_path = 'G:/evocnn/image_set/image_set/gauss50_test_image/images/'
 test_label_path = 'G:/evocnn/image_set/image_set/test_image/labels/'
 validate_image_path = 'G:/evocnn/image_set/image_set/train_image/images/validate_image/'
 validate_label_path = 'G:/evocnn/image_set/image_set/train_image/labels/validate_label/'
+final_train_image_path = 'G:/evocnn/image_set/image_set/final_train_image/images/'
+gauss50_final_train_image_path = 'G:/evocnn/image_set/image_set/final_train_image/guass50_images/'
+mixed_final_train_image_path = 'G:/evocnn/image_set/image_set/final_train_image/mixed_images/'
+final_train_label_path = 'G:/evocnn/image_set/image_set/final_train_image/labels/'
+mixed_train_image_path = 'G:/evocnn/image_set/image_set/mixed_train_image/images/'
+validate_mixed_image_path = 'G:/evocnn/image_set/image_set/mixed_train_image/images/validate_image/'
+test_mixed_path = 'G:/evocnn/image_set/image_set/mixed_test_image/images/'
 
 
 class TiffDataset(Dataset):
@@ -39,6 +47,28 @@ class TiffDataset(Dataset):
         return self.image_files[index]
 
 
+# 测试集要按顺序输入
+class Test_TiffDataset(Dataset):
+    def __init__(self, image_root, label_root):
+        # 这个list存放所有图像的地址
+        self.image_files = np.array([image_root + str(i) + '.tif' for i in range(4838)])
+        # label
+        self.label_files = np.array([label_root + str(i) + '.tif' for i in range(4838)])
+
+    def __getitem__(self, index):
+        # 读取图像数据并返回，返回训练image以及对应的label
+        # 注意：只能返回float32，进行训练
+        return torch.from_numpy(TIFF.open(self.image_files[index]).read_image().astype('float32')), torch.from_numpy(
+            TIFF.open(self.label_files[index]).read_image().astype('float32'))
+
+    def __len__(self):
+        # 返回图像的数量
+        return len(self.image_files)
+
+    def get_image_files_at(self, index):
+        return self.image_files[index]
+
+
 def get_train_loader(batch_size):
     image_dataset = TiffDataset(train_image_path, train_label_path)
     train_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
@@ -46,8 +76,15 @@ def get_train_loader(batch_size):
     return train_loader
 
 
+def get_mixed_train_loader(batch_size):
+    image_dataset = TiffDataset(mixed_train_image_path, train_label_path)
+    train_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
+    # 因为这是为了训练给evolve的初次选择所以shuffle = False
+    return train_loader
+
+
 def get_test_loader(batch_size):
-    image_dataset = TiffDataset(test_image_path, test_label_path)
+    image_dataset = Test_TiffDataset(test_image_path, test_label_path)
     test_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
     return test_loader
 
@@ -56,6 +93,42 @@ def get_validate_loader(batch_size):
     image_dataset = TiffDataset(validate_image_path, validate_label_path)
     validate_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
     return validate_loader
+
+
+def get_mixed_validate_loader(batch_size):
+    image_dataset = TiffDataset(validate_mixed_image_path, validate_label_path)
+    validate_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
+    return validate_loader
+
+
+def get_final_train_loader(batch_size):
+    image_dataset = TiffDataset(final_train_image_path, final_train_label_path)
+    final_train_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=True)
+    return final_train_loader
+
+
+def get_gauss50_final_train_loader(batch_size):
+    image_dataset = TiffDataset(gauss50_final_train_image_path, final_train_label_path)
+    gauss50_final_train_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=True)
+    return gauss50_final_train_loader
+
+
+def get_mixed_final_train_loader(batch_size):
+    image_dataset = TiffDataset(mixed_final_train_image_path, final_train_label_path)
+    mixed_final_train_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=True)
+    return mixed_final_train_loader
+
+
+def get_gauss50_test_loader(batch_size):
+    image_dataset = Test_TiffDataset(test_gauss50_path, test_label_path)
+    test_gauss50_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
+    return test_gauss50_loader
+
+
+def get_mixed_test_loader(batch_size):
+    image_dataset = Test_TiffDataset(test_mixed_path, test_label_path)
+    test_mixed_loader = DataLoader(dataset=image_dataset, batch_size=batch_size, num_workers=2, shuffle=False)
+    return test_mixed_loader
 
 
 def get_predict_size_labels(indi, labels):

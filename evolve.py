@@ -76,7 +76,9 @@ class Evolve_CNN:
         self.pops.set_populations(elistm_list)
         save_populations(gen_no=gen_no, pops=self.pops)
         save_each_gen_population(gen_no=gen_no, pops=self.pops)
-        np.random.shuffle(self.pops.pops)
+        if gen_no != 10:
+            #最后一代不用shuffle
+            np.random.shuffle(self.pops.pops)
 
     def crossover(self, p1, p2):
         p1 = copy.deepcopy(p1)
