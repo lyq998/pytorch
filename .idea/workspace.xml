@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="87462ff0-18c6-4cb5-8124-d0ef9188b5a1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/add_noise.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/combine.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/final_train.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/artificial_cnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/evolve.py" beforeDir="false" afterPath="$PROJECT_DIR$/evolve.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/make_trainAndtest_image_set.py" beforeDir="false" afterPath="$PROJECT_DIR$/make_trainAndtest_image_set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/only_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/only_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/final_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/final_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pops.dat" beforeDir="false" afterPath="$PROJECT_DIR$/pops.dat" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,35 +29,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/only_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="8" column="78" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="78" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/evaluate.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2574">
-              <caret line="88" column="45" selection-start-line="88" selection-start-column="45" selection-end-line="88" selection-end-column="45" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/final_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="109" column="23" selection-start-line="109" selection-start-column="23" selection-end-line="109" selection-end-column="23" />
+            <state relative-caret-position="341">
+              <caret line="108" column="15" selection-start-line="108" selection-start-column="15" selection-end-line="108" selection-end-column="15" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -73,10 +42,34 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/artificial_cnn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4950">
+              <caret line="158" column="31" selection-start-line="158" selection-start-column="31" selection-end-line="158" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cnn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1056">
+              <caret line="33" column="46" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/combine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="14" column="19" lean-forward="true" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+            <state relative-caret-position="396">
+              <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -135,22 +128,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/get_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2673">
-              <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+            <state relative-caret-position="561">
+              <caret line="22" selection-start-line="22" selection-end-line="22" />
               <folding>
                 <element signature="e#0#63#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cnn.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="858">
-              <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -178,6 +159,7 @@
       <find>compl</find>
       <find>0.7591486283947235,0.0360017404607344</find>
       <find>183761</find>
+      <find>summary(model,(220,30,30))</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -206,6 +188,7 @@
         <option value="$PROJECT_DIR$/combine.py" />
         <option value="$PROJECT_DIR$/only_test.py" />
         <option value="$PROJECT_DIR$/get_data.py" />
+        <option value="$PROJECT_DIR$/artificial_cnn.py" />
         <option value="$PROJECT_DIR$/final_train.py" />
       </list>
     </option>
@@ -221,20 +204,7 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="pytorch" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pytorch" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -265,7 +235,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.final_train">
-    <configuration name="add_noise" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="artificial_cnn" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -278,7 +248,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/add_noise.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/artificial_cnn.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -378,10 +348,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.final_train" />
+        <item itemvalue="Python.artificial_cnn" />
         <item itemvalue="Python.combine" />
         <item itemvalue="Python.only_test" />
         <item itemvalue="Python.make_trainAndtest_image_set" />
-        <item itemvalue="Python.add_noise" />
       </list>
     </recent_temporary>
   </component>
@@ -447,7 +417,12 @@
       <workItem from="1575424276210" duration="16407000" />
       <workItem from="1575591994893" duration="30490000" />
       <workItem from="1576157986915" duration="22171000" />
-      <workItem from="1576330762551" duration="612000" />
+      <workItem from="1576330762551" duration="1938000" />
+      <workItem from="1576408340463" duration="1622000" />
+      <workItem from="1576549097801" duration="733000" />
+      <workItem from="1576651210217" duration="3311000" />
+      <workItem from="1576726112739" duration="1463000" />
+      <workItem from="1577152595931" duration="298000" />
     </task>
     <task id="LOCAL-00001" summary="新增测试：train_test&#10;将SGD改为Adam，并且增加了了batchnorm2d，直接可以跑了&#10;所以在原有的基础上将bn层的mutation和crossover加入并测试成功&#10;最后把cnn里面的东西改了，大概测试了一下，能正常训练了&#10;其中Adam(lr=0.01)">
       <created>1572511591739</created>
@@ -484,11 +459,18 @@
       <option name="project" value="LOCAL" />
       <updated>1574845262674</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="基本上把后面的所有弄完了&#10;包括combine,test等操作&#10;暂且命名为1.0">
+      <created>1576336139158</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1576336139158</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="397468000" />
+    <option name="totallyTimeSpent" value="406221000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -508,7 +490,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.51084596" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30368763" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.55097616" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" weight="0.6876356" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -598,7 +580,8 @@
     <MESSAGE value="在进化到第五次的时候出了一个越界的错误（在crossover里），正在检查&#10;这是一个基本上能够正常运行的版本了" />
     <MESSAGE value="1.越界错误找到了：在Mutation add操作时没有加两层，导致网络结构出错&#10;2.整体又加了ReflectPad层，保证图像的大小&#10;3.修改了begin restart的保存，使evaluate一个网络就能保存而不是要等一个generation训练完&#10;4.开始真正训练，lr=0.004，mean_loss阈值设为1000，pop size改为30，目前一代要跑8个小时，总共11代的话就是80个小时左右看效果" />
     <MESSAGE value="重大错误修改&#10;原来Restart载入的pop变为了CNN.pop这样在选择的时候是有很大问题的&#10;所以现在改成保存Pop*2的数据（也就是上一代的pops和新产生还没有evaluate完的子代）" />
-    <option name="LAST_COMMIT_MESSAGE" value="重大错误修改&#10;原来Restart载入的pop变为了CNN.pop这样在选择的时候是有很大问题的&#10;所以现在改成保存Pop*2的数据（也就是上一代的pops和新产生还没有evaluate完的子代）" />
+    <MESSAGE value="基本上把后面的所有弄完了&#10;包括combine,test等操作&#10;暂且命名为1.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="基本上把后面的所有弄完了&#10;包括combine,test等操作&#10;暂且命名为1.0" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -633,10 +616,11 @@
     <SUITE FILE_PATH="coverage/pytorch$evaluate.coverage" NAME="evaluate Coverage Results" MODIFIED="1574138044016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$new_cnn_test.coverage" NAME="new_cnn_test Coverage Results" MODIFIED="1571903177428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$make_trainAndtest_image_set.coverage" NAME="make_trainAndtest_image_set Coverage Results" MODIFIED="1576119888055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pytorch$final_train.coverage" NAME="final_train Coverage Results" MODIFIED="1576230608336" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pytorch$final_train.coverage" NAME="final_train Coverage Results" MODIFIED="1576726368812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$get_data.coverage" NAME="get_data Coverage Results" MODIFIED="1571892065517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$add_noise.coverage" NAME="add_noise Coverage Results" MODIFIED="1576116098592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$train_test.coverage" NAME="train_test Coverage Results" MODIFIED="1572499733092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pytorch$artificial_cnn.coverage" NAME="artificial_cnn Coverage Results" MODIFIED="1576726184477" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$cnn_test.coverage" NAME="cnn_test Coverage Results" MODIFIED="1571124371266" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$only_test.coverage" NAME="only_test Coverage Results" MODIFIED="1576225700020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pytorch$individual.coverage" NAME="individual Coverage Results" MODIFIED="1573634274429" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -872,13 +856,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Miniconda3/Lib/site-packages/torch/nn/modules/conv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="322" column="8" selection-start-line="322" selection-start-column="8" selection-end-line="322" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/evolve.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2607">
@@ -966,6 +943,53 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/Miniconda3/Lib/site-packages/torch/nn/modules/conv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="463">
+          <caret line="327" column="28" selection-start-line="327" selection-start-column="28" selection-end-line="327" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/final_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="108" column="15" selection-start-line="108" selection-start-column="15" selection-end-line="108" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/artificial_cnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4950">
+          <caret line="158" column="31" selection-start-line="158" selection-start-column="31" selection-end-line="158" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1056">
+          <caret line="33" column="46" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/combine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/add_noise.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1650">
@@ -1008,40 +1032,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/get_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2673">
-          <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+        <state relative-caret-position="561">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
           <folding>
             <element signature="e#0#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/combine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="14" column="19" lean-forward="true" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/final_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="109" column="23" selection-start-line="109" selection-start-column="23" selection-end-line="109" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>

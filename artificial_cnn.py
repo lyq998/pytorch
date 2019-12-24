@@ -1,22 +1,81 @@
+import torch.nn as nn
+import torch.nn.functional as F
 import torch
-from torch import nn
-from cnn import CNN
-from utils import *
+import os
 import get_data
 from tqdm import tqdm
+import numpy as np
 from libtiff import TIFF
 from torchsummary import summary
 
 
-def train(model, batch_size, optimizer, model_type):
+class ArtificialCNN(nn.Module):
+    def __init__(self):
+        super(ArtificialCNN, self).__init__()
+        self.conv1 = nn.Conv2d(220, 220, 3, 1, 1)
+        self.conv2 = nn.Conv2d(220, 220, 3, 1, 1)
+        self.conv3 = nn.Conv2d(220, 220, 3, 1, 1)
+        self.conv4 = nn.Conv2d(220, 220, 3, 1, 1)
+        self.conv5 = nn.Conv2d(220, 440, 3, 1, 1)
+        self.conv6 = nn.Conv2d(440, 440, 3, 1, 1)
+        self.conv7 = nn.Conv2d(440, 440, 3, 1, 1)
+        self.conv8 = nn.Conv2d(440, 880, 3, 1, 1)
+        self.conv9 = nn.Conv2d(880, 880, 3, 1, 1)
+        self.conv10 = nn.Conv2d(880, 880, 3, 1, 1)
+        self.conv11 = nn.Conv2d(880, 440, 3, 1, 1)
+        self.conv12 = nn.Conv2d(440, 440, 3, 1, 1)
+        self.conv13 = nn.Conv2d(440, 440, 3, 1, 1)
+        self.conv14 = nn.Conv2d(440, 220, 3, 1, 1)
+        self.conv15 = nn.Conv2d(220, 220, 3, 1, 1)
+        self.conv16 = nn.Conv2d(220, 220, 3)
+
+        self.bn1 = nn.BatchNorm2d(220)
+        self.bn2 = nn.BatchNorm2d(220)
+        self.bn3 = nn.BatchNorm2d(220)
+        self.bn4 = nn.BatchNorm2d(220)
+        self.bn5 = nn.BatchNorm2d(440)
+        self.bn6 = nn.BatchNorm2d(440)
+        self.bn7 = nn.BatchNorm2d(440)
+        self.bn8 = nn.BatchNorm2d(880)
+        self.bn9 = nn.BatchNorm2d(880)
+        self.bn10 = nn.BatchNorm2d(880)
+        self.bn11 = nn.BatchNorm2d(440)
+        self.bn12 = nn.BatchNorm2d(440)
+        self.bn13 = nn.BatchNorm2d(440)
+        self.bn14 = nn.BatchNorm2d(220)
+        self.bn15 = nn.BatchNorm2d(220)
+
+    def _initialize_weights(self):
+        # print(self.modules())
+        for m in self.modules():
+            # print(m)
+            if isinstance(m, (nn.Conv2d, nn.Linear)):
+                nn.init.xavier_uniform_(m.weight)
+                # print(m.weight)
+
+    def forward(self, x):
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = F.relu(self.bn4(self.conv4(x)))
+        x = F.relu(self.bn5(self.conv5(x)))
+        x = F.relu(self.bn6(self.conv6(x)))
+        x = F.relu(self.bn7(self.conv7(x)))
+        x = F.relu(self.bn8(self.conv8(x)))
+        x = F.relu(self.bn9(self.conv9(x)))
+        x = F.relu(self.bn10(self.conv10(x)))
+        x = F.relu(self.bn11(self.conv11(x)))
+        x = F.relu(self.bn12(self.conv12(x)))
+        x = F.relu(self.bn13(self.conv13(x)))
+        x = F.relu(self.bn14(self.conv14(x)))
+        x = F.relu(self.bn15(self.conv15(x)))
+        x = self.conv16(x)
+        return x
+
+def train(model, batch_size, optimizer):
     torch_device = torch.device('cuda')
     model.cuda()
-    if model_type == 1:
-        train_loader = get_data.get_final_train_loader(batch_size)
-    elif model_type == 2:
-        train_loader = get_data.get_gauss50_final_train_loader(batch_size)
-    else:
-        train_loader = get_data.get_mixed_final_train_loader(batch_size)
+    train_loader = get_data.get_final_train_loader(batch_size)
 
     # Loss and optimizer 3.定义损失函数， 使用的是最小平方误差函数
     criterion = nn.MSELoss()
@@ -26,7 +85,7 @@ def train(model, batch_size, optimizer, model_type):
     num_epochs = train_loader.__len__()
     # Train the model 5. 迭代训练
     model.train()
-    batch_tqdm = tqdm(enumerate(train_loader, 0), total=num_epochs, ncols=100)
+    batch_tqdm = tqdm(enumerate(train_loader, 0), total=num_epochs)
     for i, data in batch_tqdm:
         # Convert numpy arrays to torch tensors  5.1 准备tensor的训练数据和标签
         inputs, labels = data
@@ -55,7 +114,7 @@ def train(model, batch_size, optimizer, model_type):
         myfile.write("\n")
 
 
-def test(model, batch_size, model_type, save):
+def test(model, batch_size, save):
     # evaluate
     model.eval()
     torch_device = torch.device('cuda')
@@ -64,14 +123,9 @@ def test(model, batch_size, model_type, save):
     criterion = criterion.to(torch_device)
     eval_loss_dict = []
 
-    if model_type == 1:
-        test_loader = get_data.get_test_loader(batch_size)
-    elif model_type == 2:
-        test_loader = get_data.get_gauss50_test_loader(batch_size)
-    else:
-        test_loader = get_data.get_mixed_test_loader(batch_size)
+    test_loader = get_data.get_test_loader(batch_size)
 
-    batch_tqdm = tqdm(enumerate(test_loader, 0), total=test_loader.__len__(), ncols=100)
+    batch_tqdm = tqdm(enumerate(test_loader, 0), total=test_loader.__len__())
     for i, data in batch_tqdm:
         inputs, labels = data
         labels = get_data.get_size_labels(1, labels)
@@ -94,55 +148,34 @@ def test(model, batch_size, model_type, save):
     std_test_loss = np.std(eval_loss_dict)
     print("valid mean:{},std:{}".format(mean_test_loss, std_test_loss))
 
-
 if __name__ == '__main__':
-    # 一定记住要在开始运行之前切换pops等数据
-    model_type = 1  # 1:gauss200   2:gauss50   3:mixed
+    save_dir = os.getcwd() + '/artificialmodel.pth'
+    batch_size = 128
     test_flag = False
     save_flag = False
-    batch_size = 10
     epoch = 0
 
-    _, pops, _ = load_population()
-    indi = pops.pops[0]
-    model = CNN(indi)
+    model = ArtificialCNN()
+    model._initialize_weights()
     model.cuda()
-    summary(model,(220,30,30))
 
-    # if model_type == 1:
-    #     save_dir = os.getcwd() + '/model.pth'
-    # elif model_type == 2:
-    #     save_dir = os.getcwd() + '/gauss50_model.pth'
-    # else:
-    #     save_dir = os.getcwd() + '/mixed_model.pth'
+    summary(model,(220,30,30))
+    # learning_rate = 0.001
+    # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     #
     # # 如果test_flag=True,则加载已保存的模型
     # if test_flag:
     #     # 加载保存的模型直接进行测试机验证，不进行此模块以后的步骤
-    #     # 这里是从最后的pop.dat里读第一个indi
-    #     _, pops, _ = load_population()
-    #     indi = pops.pops[0]
-    #     model = CNN(indi)
     #     # 一定要将模型先cuda
     #     model.cuda()
     #     checkpoint = torch.load(save_dir)
     #     model.load_state_dict(checkpoint['model'])
-    #     test(model, batch_size, model_type, save_flag)
+    #     test(model, batch_size, save_flag)
     # else:
-    #     # 这里是从最后的pop.dat里读第一个indi
-    #     _, pops, _ = load_population()
-    #     indi = pops.pops[0]
-    #     model = CNN(indi)
     #     # 一定要将模型先cuda
     #     model.cuda()
-    #     print('从pops中选择最好的个体保存模型')
     #     print(model)
     #
-    #     # 定义迭代优化算法， 使用的是Adam，SGD不行
-    #     learning_rate = 0.001
-    #     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    #
-    #     # 如果有保存的模型，则加载模型，并在其基础上继续训练
     #     if os.path.exists(save_dir):
     #         checkpoint = torch.load(save_dir)
     #         model.load_state_dict(checkpoint['model'])
@@ -151,8 +184,9 @@ if __name__ == '__main__':
     #
     #     while (True):
     #         print('start epoch:{}'.format(epoch))
-    #         train(model, batch_size, optimizer, model_type)
+    #         train(model, batch_size, optimizer)
     #         # 保存模型
     #         state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(), 'epoch': epoch}
     #         torch.save(state, save_dir)
     #         epoch = epoch + 1
+
