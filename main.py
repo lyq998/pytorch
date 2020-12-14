@@ -43,5 +43,5 @@ if __name__ == '__main__':
     print(pops.get_evaluated_pop_size())
 
 
-    # begin_evolve(0.9, 1, 0.2, 1, pop_size, batch_size, total_generation_number)
-    # restart_evolve(0.9, 1, 0.2, 1, pop_size, batch_size, total_generation_number)
+    # begin_evolve(0.2, 1, 0.9, 1, pop_size, batch_size, total_generation_number)
+    # restart_evolve(0.2, 1, 0.9, 1, pop_size, batch_size, total_generation_number)
