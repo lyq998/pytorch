@@ -1,5 +1,6 @@
 # pytorch
-我本科毕业设计的论文所使用的python代码，此部分代码可以分为四大类：
+The code for paper: Yuqiao Liu, Yanan Sun, Bing Xue, and Mengjie Zhang. "Evolving Deep Convolutional Neural Networks for Hyperspectral Image Denoising."
+论文所使用的python代码，此部分代码可以分为四大类：
 ## 1. 数据集的构建：
    1. 加模拟噪声：add_noise.py
    2. 分割图像成小块儿：make_trainAndtest_image_set.py
@@ -23,6 +24,3 @@
    1. utils.py
    2. 用来计算神经网络参数个数： nn_summery.py
    3. 获取训练数据： getdata.py
-
-***
-若有问题请联系lyq_guitar@qq.com
